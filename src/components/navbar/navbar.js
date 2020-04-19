@@ -51,7 +51,7 @@ class AppNavbar extends Component {
                         <Collapse isOpen={this.state.isOpen} navbar>
                             <Nav className="ml-auto" navbar>
                                 {localStorage.getItem('auth-token') ?
-                                <NavLink onClick={() => this.toggle("post")}>
+                                <NavLink onClick={() => this.toggle("post")} href="#">
                                     Create Post
                                 </NavLink>:
                                 <NavLink href="/home">

@@ -7,6 +7,7 @@ import {
     Label, 
     Input,
     Button,
+    Alert
   } from 'reactstrap';
 
 import { Link, Redirect } from 'react-router-dom'; 
@@ -21,12 +22,35 @@ class Signup extends Component {
             email: '',
             password: '',
             confirm_password: '',
-            error_message: ''
+            error_message: '',
+            password_message: 'Enter atleast 8 characters',
+            password_alert: 'primary'
         }
     }
 
     changeHandler = (event) => {
-        this.setState({ [event.target.name]: event.target.value })
+        this.setState({ 
+            [event.target.name]: event.target.value
+        })
+
+        if(this.state.password.length >= 8) {
+            this.setState({
+                password_message: 'Strength: Strong',
+                password_alert: 'success'
+            })
+        }
+        else if(this.state.password.length < 5){
+            this.setState({
+                password_message: 'Strength: Weak',
+                password_alert: 'danger'
+            })
+        }
+        else {
+            this.setState({
+                password_message: 'Strength: Medium',
+                password_alert: 'warning'
+            })
+        }
     }
 
     submitHandler = (event) => {
@@ -47,9 +71,13 @@ class Signup extends Component {
         }
 
         axios(requestOptions).then(res => {
-            console.log(res)
-            if(res.status == 200) {
+            if(res.data.status == 200) {
                 this.props.history.push('/')
+            }
+            else if(res.data.status == 400) {
+                this.setState({
+                    error_message: res.data.msg
+                })
             }
         })
 
@@ -63,6 +91,10 @@ class Signup extends Component {
                     <Col>
                     <h2>SignUp</h2>
                     </Col>
+                    {this.state.error_message?
+                    <Alert color="danger">{this.state.error_message}</Alert>:
+                    ""
+                    }
                     <Col>
                         <FormGroup>
                         <Label>Full Name</Label>
@@ -97,6 +129,7 @@ class Signup extends Component {
                             placeholder="********"
                             onChange={this.changeHandler}
                         />
+                        <Alert className="mt-2" color={this.state.password_alert}>{this.state.password_message}</Alert>
                         </FormGroup>
                     </Col>
                     <Col>

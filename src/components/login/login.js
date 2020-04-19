@@ -7,6 +7,7 @@ import {
     Label, 
     Input,
     Button,
+    Alert
   } from 'reactstrap';
   
 import {Link} from 'react-router-dom'; 
@@ -46,8 +47,15 @@ class Login extends Component {
         }
 
         axios(requestOptions).then(res => {
-            localStorage.setItem('auth-token',res.data.token)
-            this.props.history.push('/home')
+            if(res.data.status == 200) {
+                localStorage.setItem('auth-token',res.data.token)
+                this.props.history.push('/home')
+            }
+            else if(res.data.status == 400) {
+                this.setState({
+                    error_message: res.data.msg
+                })
+            }
         })
     }
     render() {
@@ -59,6 +67,10 @@ class Login extends Component {
                     <Col>
                     <h2>LogIn</h2>
                     </Col>
+                    {this.state.error_message?
+                        <Alert color="danger">{this.state.error_message}</Alert>:
+                        ""
+                    }
                     <Col>
                         <FormGroup>
                         <Label>Email</Label>
